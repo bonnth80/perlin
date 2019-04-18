@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Noise Test</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+<h1>Perlin Noise Generator</h1>
+This project generates and renders one dimensional perlin noise. Click the Generate button to create one random perlin noise wave.
+
+Read about perlin noise here: <a href="https://en.wikipedia.org/wiki/Perlin_noise">Wikipedia - Perlin Noise</a>
+
+
+<h3>Perlin</h3>
+<button id="btnGenerate">Generate</button>
+
+<h3>Toggle (WIP)</h3>
+<button id="btnToggle1">Layer 1</button>
+<button id="btnToggle2">Layer 2</button>
+<button id="btnToggle3">Layer 3</button>
+<button id="btnToggle4">Layer 4</button>
+
+<h3>Include (WIP)</h3>
+<button id="btnInclude1">Layer 1</button>
+<button id="btnInclude2">Layer 2</button>
+<button id="btnInclude3">Layer 3</button>
+<button id="btnInclude4">Layer 4</button>
+
+
+<div id="canvFrame">
+	<canvas id="canvas" width="800" height="200"></canvas>
+</div>
+
+<script type="text/javascript" src="script.js"></script>
+
+<div id="canvasRenderer" style="width: 400px; height: 300px">
+</div>
+<div id="controls">
+	Pan
+	<button id="btnPanUp">up</button>
+	<button id="btnPanDown">down</button>
+	<button id="btnPanLeft">left</button>
+	<button id="btnPanRight">right</button>
+	<button id="btnPanForward">forward</button>
+	<button id="btnPanBack">back</button>
+	<br>
+	Rotate
+	<button id="btnRotateUp">up</button>
+	<button id="btnRotateDown">down</button>
+	<button id="btnRotateLeft">left</button>
+	<button id="btnRotateRight">right</button>
+	<br>
+	Bank
+	<button id="btnBankLeft">left</button>
+	<button id="btnBankRight">right</button>
+	<br>
+	<button id="btnZoomExtend">Zoom Extend</button>
+	<button id="btnFreeze">Freeze Camera</button>
+
+</div>
+<!-- Three.js -->    
+<script src="js\Detector.js"></script>
+<script src="js\three.js"></script>
+<script src="js\script.js"></script>
+
+</body>
+</html>
