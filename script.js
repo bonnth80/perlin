@@ -16,37 +16,75 @@ var btnToggle3 = document.getElementById("btnToggle3");
 var btnToggle4 = document.getElementById("btnToggle4");
 
 
+// Toggles
+btnToggle1.addEventListener("click", function(){
+	// console.log("Toggle1");
+})
+
+btnToggle2.addEventListener("click", function(){
+	// console.log("Toggle2");
+})
+
+btnToggle3.addEventListener("click", function(){
+	// console.log("Toggle3");
+})
+
+btnToggle4.addEventListener("click", function(){
+	// console.log("Toggle4");
+})
+
+
 //----------------------------------------
 //			INITIALIZATION
 //----------------------------------------
 // Set up canvas ruler Guides
-const L1_COLOR						= "#8888DD";
-const L1_INTERVAL 				= 8;
-const L1_MIN							= 0;
-const L1_MAX							= 200;
-var set1									= [];
+var layers = {
+	layer1: {
+		id: "layer1",
+		color: "#8888DD",
+		interval: 8,
+		dotSize: 5,
+		min: 0,
+		max: 200,
+		set: []
+	},
+	layer2: {
+		id: "layer2",
+		color: "#55DD55",
+		interval: 4,
+		dotSize: 4,
+		min: 4,
+		max: 160,
+		set: []
+	},
+	layer3: {
+		id: "layer3",
+		color: "#EEAA33",
+		interval: 2,
+		dotSize: 3,
+		min: 80,
+		max: 140,
+		set: []
+	},
+	layer4: {
+		id: "layer4",
+		color: "#EE6666",
+		interval: 1,
+		dotSize: 2,
+		min: 100,
+		max: 120,
+		set: []
+	}
+}
 
-const L2_COLOR						= "#55DD55";
-const L2_INTERVAL 				= 4;
-const L2_MIN							= 40;
-const L2_MAX							= 160;
-var set2									= [];
-
-const L3_COLOR						= "#EEAA33";
-const L3_INTERVAL 				= 2;
-const L3_MIN							= 80;
-const L3_MAX							= 140;
-var set3									= [];
-
-const L4_COLOR						= "#EE6666";
-const L4_INTERVAL 				= 1;
-const L4_MIN							= 100;
-const L4_MAX							= 120;
-var set4									= [];
 
 const TOT_COLOR						= "black";
 var setTotals							= [];
-var perlinSetData					= [set1,set2,set3,set4,setTotals];
+var perlinSetData					= [layers.layer1.set,
+											layers.layer2.set,
+											layers.layer3.set,
+											layers.layer4.set,
+											setTotals];
 
 const NUM_DATA_POINTS			= 80;
 const CANV_WIDTH					= c.width;
@@ -60,64 +98,29 @@ drawGuides();
 
 // Generate
 btnGenerate.addEventListener("click", function(){
-	console.log("Generate");
+	// console.log("Generate");
 	clearChart();
 
-	set1 = generateLayer(L1_INTERVAL, L1_MIN, L1_MAX);
-	set2 = generateLayer(L2_INTERVAL, L2_MIN, L2_MAX);
-	set3 = generateLayer(L3_INTERVAL, L3_MIN, L3_MAX);
-	set4 = generateLayer(L4_INTERVAL, L4_MIN, L4_MAX);
+	layers.layer1.set = generateLayer(layers.layer1);
+	layers.layer2.set = generateLayer(layers.layer2);
+	layers.layer3.set = generateLayer(layers.layer3);
+	layers.layer4.set = generateLayer(layers.layer4);
 
-	renderLayer4();
-	renderLayer3();
-	renderLayer2();
-	renderLayer1();
+	renderLayer(layers.layer4);
+	renderLayer(layers.layer3);
+	renderLayer(layers.layer2);
+	renderLayer(layers.layer1);
+	//renderLayer1();
 
-	lerpSet(set1,L1_INTERVAL);
-	lerpSet(set2,L2_INTERVAL);
-	lerpSet(set3,L3_INTERVAL);
+	lerpSetX(layers.layer1);
+	lerpSetX(layers.layer2);
+	lerpSetX(layers.layer3);
 
-	generateTotals();
-	console.log(perlinSetData);
+	generateTotals(layers);
+	// console.log(perlinSetData);
 
-	renderTotal();
+	renderTotal(layers);
 
-})
-
-
-// Toggles
-btnToggle1.addEventListener("click", function(){
-	console.log("Toggle1");
-})
-
-btnToggle2.addEventListener("click", function(){
-	console.log("Toggle2");
-})
-
-btnToggle3.addEventListener("click", function(){
-	console.log("Toggle3");
-})
-
-btnToggle4.addEventListener("click", function(){
-	console.log("Toggle4");
-})
-
-
-// Includes
-btnInclude1.addEventListener("click", function(){
-	console.log("Include1");
-})
-
-btnInclude2.addEventListener("click", function(){
-	console.log("Include2");
-})
-
-btnInclude3.addEventListener("click", function(){
-	console.log("Include3");
-})
-
-btnInclude4.addEventListener("click", function(){
-	console.log("Include4");
 })
 
 //----------------------------------------
@@ -164,106 +167,53 @@ function drawGuides(){
 	}
 }
 
-function generateLayer(INTERVAL, MIN, MAX) {
-
+function generateLayer(objectX) {
 	var set = [];
 	for (var i = 0; i <= NUM_DATA_POINTS; i+=1){
-		var val = Math.floor(Math.random()*(MAX-MIN)+MIN);
-		if (i%INTERVAL==0)
+		var val = Math.floor(Math.random()*(objectX.max-objectX.min)+objectX.min);
+		if (i%objectX.interval==0)
 			set[i] = val;
 		else set[i] = 0;
 	}
 	return set;
 }
 
-function generateTotals() {
-	// work on this
+
+function generateTotals(objectY) {
 	for (var i = 0; i <= NUM_DATA_POINTS; i+=1) {
-		perlinSetData[4][i] = set1[i]+set2[i]+set3[i]+set4[i];
+		perlinSetData[4][i] = objectY.layer1.set[i]
+									+ objectY.layer2.set[i]
+									+ objectY.layer3.set[i]
+									+ objectY.layer4.set[i];
 	}
 }
 
-
-function renderLayer1() {
-	console.log("rendering Layer 1");
+function renderLayer(objectX) {
+	// console.log ("rendering Layer: " + objectX.id);
 	canv.beginPath();
-	canv.strokeStyle = L1_COLOR;
-	canv.moveTo(0, set1[0]);
 
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=L1_INTERVAL) {
-		canv.lineTo(i*(CANV_WIDTH/NUM_DATA_POINTS),200-set1[i]);		
+	// start line
+	canv.strokeStyle = objectX.color;
+	canv.moveTo(0, objectX.set[0]);
+
+	// draw line
+	for (var i = 0; i <= NUM_DATA_POINTS; i+=objectX.interval) {
+		canv.lineTo(i*(CANV_WIDTH/NUM_DATA_POINTS),200-objectX.set[i]);		
 	}
 	canv.stroke();
 	
-	canv.fillStyle = L1_COLOR;
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=L1_INTERVAL) {
+	// draw dot
+	canv.fillStyle = objectX.color;
+	for (var i = 0; i <= NUM_DATA_POINTS; i+=objectX.interval) {
 		canv.beginPath();
-		canv.arc(i*(CANV_WIDTH/NUM_DATA_POINTS), 200-set1[i], 5, 2, 360);
+		canv.arc(i*(CANV_WIDTH/NUM_DATA_POINTS), 200-objectX.set[i], objectX.dotSize, 2, 360);
 		canv.fill();
 	}
 }
 
-function renderLayer2() {
-	console.log("rendering Layer 2");
-	canv.beginPath();
-	canv.strokeStyle = L2_COLOR;
-	canv.moveTo(0, set2[0]);
-
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=L2_INTERVAL) {
-		canv.lineTo(i*(CANV_WIDTH/NUM_DATA_POINTS),200-set2[i]);		
-	}
-	canv.stroke();
-	
-	canv.fillStyle = L2_COLOR;
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=L2_INTERVAL) {
-		canv.beginPath();
-		canv.arc(i*(CANV_WIDTH/NUM_DATA_POINTS), 200-set2[i], 4, 2, 360);
-		canv.fill();
-	}
-}
-
-function renderLayer3() {
-	console.log("rendering Layer 3");
-	canv.beginPath();
-	canv.strokeStyle = L3_COLOR;
-	canv.moveTo(0, set3[0]);
-
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=L3_INTERVAL) {
-		canv.lineTo(i*(CANV_WIDTH/NUM_DATA_POINTS),200-set3[i]);		
-	}
-	canv.stroke();
-	
-	canv.fillStyle = L3_COLOR;
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=L3_INTERVAL) {
-		canv.beginPath();
-		canv.arc(i*(CANV_WIDTH/NUM_DATA_POINTS), 200-set3[i], 3, 2, 360);
-		canv.fill();
-	}
-}
-
-function renderLayer4() {
-	console.log("rendering Layer 4");
-	canv.beginPath();
-	canv.strokeStyle = L4_COLOR;
-	canv.moveTo(0, set4[0]);
-
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=L4_INTERVAL) {
-		canv.lineTo(i*(CANV_WIDTH/NUM_DATA_POINTS),200-set4[i]);		
-	}
-	canv.stroke();
-	
-	canv.fillStyle = L4_COLOR;
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=L4_INTERVAL) {
-		canv.beginPath();
-		canv.arc(i*(CANV_WIDTH/NUM_DATA_POINTS), 200-set4[i], 2, 2, 360);
-		canv.fill();
-	}
-}
-
-function renderTotal() {
-	var totalMaxVal = L1_MAX+L2_MAX+L3_MAX+L4_MAX;
-	scaledSet = scaleTotalForChart();
-	console.log("rendering Totals");
+function renderTotal(objectY) {
+	scaledSet = scaleTotalForChart(objectY);
+	// console.log("rendering Totals");
 	canv.beginPath();
 	canv.strokeStyle = TOT_COLOR;
 	canv.moveTo(0, scaledSet[0]);
@@ -281,10 +231,13 @@ function renderTotal() {
 	}
 }
 
-function scaleTotalForChart(){
+function scaleTotalForChart(objectY){
 	var scaledSet = [];
-	var totalMaxVal = L1_MAX+L2_MAX+L3_MAX+L4_MAX;
-
+	var totalMaxVal = objectY.layer1.max
+						+ objectY.layer2.max
+						+ objectY.layer3.max
+						+ objectY.layer4.max;
+	
 	for (var i = 0; i < NUM_DATA_POINTS; i++){
 		scaledSet[i] = perlinSetData[4][i]*(200/totalMaxVal);
 	}
@@ -295,6 +248,15 @@ function scaleTotalForChart(){
 function lerp(a,b,f) 
 {
     return (a * (1.0 - f)) + (b * f);
+}
+
+function lerpSetX(objectX) {
+	var mySet = objectX.set;
+	for (var i = 0; i < mySet.length-1; i++){
+		mySet[i] = lerp(mySet[Math.floor(i/objectX.interval)*objectX.interval],mySet[Math.floor(i/objectX.interval+1)*objectX.interval],(i%objectX.interval)/objectX.interval);
+		//console.log(mySet[i]);
+	}
+	return mySet;
 }
 
 function lerpSet(set, interval) {
