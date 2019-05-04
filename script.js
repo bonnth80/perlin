@@ -246,8 +246,9 @@ function scaleTotalForChart(objectY){
 }
 
 function lerp(a,b,f) 
-{
-    return (a * (1.0 - f)) + (b * f);
+{	
+	// a = min, b = max, f = fraction (0 - 1);
+	return a  - (f * a) + (f * b);
 }
 
 function lerpSetX(objectX) {
