@@ -15,11 +15,6 @@ var btnToggle2 = document.getElementById("btnToggle2");
 var btnToggle3 = document.getElementById("btnToggle3");
 var btnToggle4 = document.getElementById("btnToggle4");
 
-var btnInclude1 = document.getElementById("btnInclude1");
-var btnInclude2 = document.getElementById("btnInclude2");
-var btnInclude3 = document.getElementById("btnInclude3");
-var btnInclude4 = document.getElementById("btnInclude4");
-
 
 //----------------------------------------
 //			INITIALIZATION
@@ -169,18 +164,7 @@ function drawGuides(){
 	}
 }
 
-// function generateLayer(INTERVAL, MIN, MAX) {
-// 	var set = [];
-// 	for (var i = 0; i <= NUM_DATA_POINTS/INTERVAL; i+=1){
-// 		var val = Math.floor(Math.random()*(MAX-MIN)+MIN);
-// 		set[i] = val;
-// 	}
-// 	return set;
-// }
-
 function generateLayer(INTERVAL, MIN, MAX) {
-
-	//TEMP!! Work onthis
 
 	var set = [];
 	for (var i = 0; i <= NUM_DATA_POINTS; i+=1){
@@ -199,17 +183,6 @@ function generateTotals() {
 	}
 }
 
-function renderLayer1() {
-	console.log("rendering Layer 1");
-	canv.beginPath();
-	canv.strokeStyle = L1_COLOR;
-	canv.moveTo(0, set1[0]);
-
-	for (var i = 1; i <= NUM_DATA_POINTS*L1_INTERVAL; i+=1) {
-		canv.lineTo(i*(CANV_WIDTH/NUM_DATA_POINTS)*L1_INTERVAL,200-set1[i]);
-	}
-		canv.stroke();
-}
 
 function renderLayer1() {
 	console.log("rendering Layer 1");
