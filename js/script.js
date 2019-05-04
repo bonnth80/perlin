@@ -1,5 +1,5 @@
 
-var canvX = document.getElementById("canvasRenderer");
+var canvX = document.getElementById("3dRenderer");
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 75, .75, 0.1, 1000 );
 var renderer = new THREE.WebGLRenderer();
