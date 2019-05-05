@@ -20,7 +20,7 @@ var btnToggle4 = document.getElementById("btnToggle4");
 //----------------------------------------
 
 // layer data
-var layersX = [
+var layers = [
 	{
 		id: "layer1",
 		color: "#AFAFEF",
@@ -66,6 +66,7 @@ var layersX = [
 appController = {
 	renderLayers: [true,true,true,true],
 	calcLayers: [true,true,true,true],
+	totals: [],
 	perlin: [],
 	color: "#000",
 	numDataPoints: 80
@@ -81,43 +82,25 @@ drawGuides();
 //----------------------------------------
 
 // Generate
-btnGenerate.addEventListener("click", function(){
-	// console.log("Generate");
-	clearChart();
-
-	layersX.forEach(function(e){
-		e.set = generateLayer_wLerp(e);
-	})
-
-	layersX.forEach(function(e){
-		renderLayer(e);
-	})
-
-	// you never have to interpolate set with highest frequency
-	generateTotals(layersX);
-	
-	// console.log(perlinSetData);
-
-	renderTotal(appController);
-
-})
+btnGenerate.addEventListener("click", generatePerlin);
 
 // Toggles
 btnToggle1.addEventListener("click", function(){
-	
-})
+	// layers[0].calcLayer = !layers[0].calcLayer;
+	// perlin();
+});
 
 btnToggle2.addEventListener("click", function(){
 	// console.log("Toggle2");
-})
+});
 
 btnToggle3.addEventListener("click", function(){
 	// console.log("Toggle3");
-})
+});
 
 btnToggle4.addEventListener("click", function(){
 	// console.log("Toggle4");
-})
+});
 
 //----------------------------------------
 //			Grid Rendering
@@ -166,6 +149,48 @@ function drawGuides(){
 //----------------------------------------
 //			Data Generation
 //----------------------------------------
+
+function generatePerlin() {
+	/*
+		P = ((maxA-minA) * (A[i] + B[i] + C[i] ...) / maxTotal) - minA
+	*/
+
+	generateLayerData();
+	perlin(layers);
+	renderPerlin();
+}
+
+function generateLayerData() {
+	// generate individual layer data
+	layers.forEach(function(e){
+		e.set = generateLayer_wLerp(e);
+	})
+}
+
+function perlin(objectX) {
+	for (var i = 0; i <= appController.numDataPoints; i+=1) {
+		appController.totals[i] = 0;
+
+		objectX.forEach(function(e){
+			if (e.calcLayer) {
+				appController.totals[i] += e.set[i];
+			}
+		})
+	}
+
+	appController.perlin = perlinScale(appController.totals);
+}
+
+function renderPerlin(){	
+	clearChart();
+	// render individual layers
+	layers.forEach(function(e){
+		renderLayer(e);
+	})
+	// render perlin
+	renderTotal(appController);
+}
+
 function generateLayer_wLerp(objectX) {
 	var set = [];
 
@@ -185,28 +210,16 @@ function generateLayer_wLerp(objectX) {
 	return set;
 }
 
-function generateTotals(objectX) {
-	for (var i = 0; i <= appController.numDataPoints; i+=1) {
-		appController.perlin[i] = 0;
-
-		objectX.forEach(function(e){
-			if (e.calcLayer) {
-				appController.perlin[i] += e.set[i];
-			}
-		})
-	}
-}
-
-function scaleTotalForChart(objectY){
+function perlinScale(totals){
 	var scaledSet = [];
 	var totalMaxVal = 0.0;
-	layersX.forEach(function(e){
+	layers.forEach(function(e){
 		if (e.calcLayer)
 			totalMaxVal += e.max;
 	})
-	
+	console.log(totals);
 	for (var i = 0; i <= appController.numDataPoints; i++){
-		scaledSet[i] = appController.perlin[i]/totalMaxVal*200;
+		scaledSet[i] = totals[i]/totalMaxVal*200;
 	}
 	return scaledSet;
 }
@@ -217,7 +230,6 @@ function scaleTotalForChart(objectY){
 
 function renderLayer(objectX) {
 	canv.beginPath();
-
 	// start line
 	canv.strokeStyle = objectX.color;
 	canv.moveTo(0, objectX.set[0]);
@@ -238,20 +250,19 @@ function renderLayer(objectX) {
 }
 
 function renderTotal(objectY) {
-	scaledSet = scaleTotalForChart(objectY);
 	canv.beginPath();
 	canv.strokeStyle = appController.color;
-	canv.moveTo(0, scaledSet[0]);
+	canv.moveTo(0, objectY.perlin[0]);
 
 	for (var i = 0; i <= appController.numDataPoints; i+=1) {
-		canv.lineTo(i*(CANV_WIDTH/appController.numDataPoints),200-scaledSet[i]);		
+		canv.lineTo(i*(CANV_WIDTH/appController.numDataPoints),200-objectY.perlin[i]);		
 	}
 	canv.stroke();
 	
 	canv.fillStyle = appController.color;
 	for (var i = 0; i <= appController.numDataPoints; i+=1) {
 		canv.beginPath();
-		canv.arc(i*(CANV_WIDTH/appController.numDataPoints), 200-scaledSet[i], 2, 2, 360);
+		canv.arc(i*(CANV_WIDTH/appController.numDataPoints), 200-objectY.perlin[i], 2, 2, 360);
 		canv.fill();
 	}
 }
