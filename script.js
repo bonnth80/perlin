@@ -18,9 +18,6 @@ var btnToggle4 = document.getElementById("btnToggle4");
 //----------------------------------------
 //			INITIALIZATION
 //----------------------------------------
-// Set up canvas ruler Guides
-const CANV_WIDTH					= c.width;
-drawGuides();
 
 // layer data
 var layersX = [
@@ -64,7 +61,7 @@ var layersX = [
 		set: [],
 		calcLayer: true
 	}
-]
+];
 
 appController = {
 	renderLayers: [true,true,true,true],
@@ -73,6 +70,11 @@ appController = {
 	color: "#000",
 	numDataPoints: 80
 }
+
+
+// Set up canvas ruler Guides
+const CANV_WIDTH					= c.width;
+drawGuides();
 
 //----------------------------------------
 //			BUTTON FUNCTIONS
@@ -198,18 +200,14 @@ function generateTotals(objectX) {
 function scaleTotalForChart(objectY){
 	var scaledSet = [];
 	var totalMaxVal = 0.0;
-	console.log(objectY.perlin);
 	layersX.forEach(function(e){
 		if (e.calcLayer)
 			totalMaxVal += e.max;
 	})
-
-	console.log("******************* totalMaxVal: " + totalMaxVal);
 	
 	for (var i = 0; i <= appController.numDataPoints; i++){
 		scaledSet[i] = appController.perlin[i]/totalMaxVal*200;
 	}
-	console.log(scaledSet);
 	return scaledSet;
 }
 
@@ -218,7 +216,6 @@ function scaleTotalForChart(objectY){
 //----------------------------------------
 
 function renderLayer(objectX) {
-	// console.log ("rendering Layer: " + objectX.id);
 	canv.beginPath();
 
 	// start line
