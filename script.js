@@ -19,59 +19,60 @@ var btnToggle4 = document.getElementById("btnToggle4");
 //			INITIALIZATION
 //----------------------------------------
 // Set up canvas ruler Guides
-var layers = {
-	layer1: {
+const CANV_WIDTH					= c.width;
+drawGuides();
+
+// layer data
+var layersX = [
+	{
 		id: "layer1",
 		color: "#AFAFEF",
 		interval: 8,
 		dotSize: 5,
-		min: 0,
+		min: 20,
 		max: 200,
-		set: []
+		set: [],
+		calcLayer: true
 	},
-	layer2: {
+	{
 		id: "layer2",
 		color: "#99EE99",
 		interval: 4,
 		dotSize: 4,
-		min: 4,
+		min: 40,
 		max: 160,
-		set: []
+		set: [],
+		calcLayer: true
 	},
-	layer3: {
+	{
 		id: "layer3",
 		color: "#FFCC66",
 		interval: 2,
 		dotSize: 3,
-		min: 80,
+		min: 60,
 		max: 140,
-		set: []
+		set: [],
+		calcLayer: true
 	},
-	layer4: {
+	{
 		id: "layer4",
 		color: "#FF9999",
 		interval: 1,
 		dotSize: 2,
-		min: 100,
+		min: 80,
 		max: 120,
-		set: []
+		set: [],
+		calcLayer: true
 	}
-}
+]
 
 appController = {
 	renderLayers: [true,true,true,true],
 	calcLayers: [true,true,true,true],
-	perlin: []
+	perlin: [],
+	color: "#000",
+	numDataPoints: 80
 }
-
-const TOT_COLOR						= "black";
-var setTotals							= [];
-
-const NUM_DATA_POINTS			= 80;
-const CANV_WIDTH					= c.width;
-
-drawGuides();
-
 
 //----------------------------------------
 //			BUTTON FUNCTIONS
@@ -82,25 +83,20 @@ btnGenerate.addEventListener("click", function(){
 	// console.log("Generate");
 	clearChart();
 
-	layers.layer1.set = generateLayer(layers.layer1);
-	layers.layer2.set = generateLayer(layers.layer2);
-	layers.layer3.set = generateLayer(layers.layer3);
-	layers.layer4.set = generateLayer(layers.layer4);
+	layersX.forEach(function(e){
+		e.set = generateLayer_wLerp(e);
+	})
 
-	renderLayer(layers.layer4);
-	renderLayer(layers.layer3);
-	renderLayer(layers.layer2);
-	renderLayer(layers.layer1);
-	//renderLayer1();
+	layersX.forEach(function(e){
+		renderLayer(e);
+	})
 
-	lerpSet(layers.layer1);
-	lerpSet(layers.layer2);
-	lerpSet(layers.layer3);
-
-	generateTotals(layers);
+	// you never have to interpolate set with highest frequency
+	generateTotals(layersX);
+	
 	// console.log(perlinSetData);
 
-	renderTotal(layers);
+	renderTotal(appController);
 
 })
 
@@ -161,45 +157,59 @@ function drawGuides(){
 		canv.moveTo(i+.5,200);
 		canv.lineTo(i+.5,190);
 		canv.stroke();
-		canv.fillText(i*(NUM_DATA_POINTS/CANV_WIDTH),i+2,199)
+		canv.fillText(i*(appController.numDataPoints/CANV_WIDTH),i+2,199)
 	}
 }
 
 //----------------------------------------
 //			Data Generation
 //----------------------------------------
-
-function generateLayer(objectX) {
+function generateLayer_wLerp(objectX) {
 	var set = [];
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=1){
-		var val = Math.floor(Math.random()*(objectX.max-objectX.min)+objectX.min);
-		if (i%objectX.interval==0)
-			set[i] = val;
-		else set[i] = 0;
+
+	var nextVal = Math.floor(Math.random() * (objectX.max - objectX.min) + objectX.min);;
+	var currentVal = 0.0;
+
+	set[0] = currentVal;
+	for (var i = 0; i <= appController.numDataPoints; i += 1){		
+		if (i % objectX.interval == 0){
+			set[i] = currentVal = nextVal;
+			nextVal = Math.floor(Math.random() * (objectX.max - objectX.min) + objectX.min);
+		}
+		else {			
+			set[i] = lerp(currentVal,nextVal,(i % objectX.interval / objectX.interval));
+		}
 	}
 	return set;
 }
 
-function generateTotals(objectY) {
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=1) {
-		appController.perlin[i] = objectY.layer1.set[i]
-									+ objectY.layer2.set[i]
-									+ objectY.layer3.set[i]
-									+ objectY.layer4.set[i];
+function generateTotals(objectX) {
+	for (var i = 0; i <= appController.numDataPoints; i+=1) {
+		appController.perlin[i] = 0;
+
+		objectX.forEach(function(e){
+			if (e.calcLayer) {
+				appController.perlin[i] += e.set[i];
+			}
+		})
 	}
 }
 
 function scaleTotalForChart(objectY){
 	var scaledSet = [];
-	var totalMaxVal = objectY.layer1.max
-						+ objectY.layer2.max
-						+ objectY.layer3.max
-						+ objectY.layer4.max;
-	
-	for (var i = 0; i < NUM_DATA_POINTS; i++){
-		scaledSet[i] = appController.perlin[i]*(200/totalMaxVal);
-	}
+	var totalMaxVal = 0.0;
+	console.log(objectY.perlin);
+	layersX.forEach(function(e){
+		if (e.calcLayer)
+			totalMaxVal += e.max;
+	})
 
+	console.log("******************* totalMaxVal: " + totalMaxVal);
+	
+	for (var i = 0; i <= appController.numDataPoints; i++){
+		scaledSet[i] = appController.perlin[i]/totalMaxVal*200;
+	}
+	console.log(scaledSet);
 	return scaledSet;
 }
 
@@ -216,53 +226,40 @@ function renderLayer(objectX) {
 	canv.moveTo(0, objectX.set[0]);
 
 	// draw line
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=objectX.interval) {
-		canv.lineTo(i*(CANV_WIDTH/NUM_DATA_POINTS),200-objectX.set[i]);		
+	for (var i = 0; i <= appController.numDataPoints; i+=objectX.interval) {
+		canv.lineTo(i*(CANV_WIDTH/appController.numDataPoints),200-objectX.set[i]);		
 	}
 	canv.stroke();
 	
 	// draw dot
 	canv.fillStyle = objectX.color;
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=objectX.interval) {
+	for (var i = 0; i <= appController.numDataPoints; i+=objectX.interval) {
 		canv.beginPath();
-		canv.arc(i*(CANV_WIDTH/NUM_DATA_POINTS), 200-objectX.set[i], objectX.dotSize, 2, 360);
+		canv.arc(i*(CANV_WIDTH/appController.numDataPoints), 200-objectX.set[i], objectX.dotSize, 2, 360);
 		canv.fill();
 	}
 }
 
 function renderTotal(objectY) {
 	scaledSet = scaleTotalForChart(objectY);
-	// console.log("rendering Totals");
 	canv.beginPath();
-	canv.strokeStyle = TOT_COLOR;
+	canv.strokeStyle = appController.color;
 	canv.moveTo(0, scaledSet[0]);
 
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=1) {
-		canv.lineTo(i*(CANV_WIDTH/NUM_DATA_POINTS),200-scaledSet[i]);		
+	for (var i = 0; i <= appController.numDataPoints; i+=1) {
+		canv.lineTo(i*(CANV_WIDTH/appController.numDataPoints),200-scaledSet[i]);		
 	}
 	canv.stroke();
 	
-	canv.fillStyle = TOT_COLOR;
-	for (var i = 0; i <= NUM_DATA_POINTS; i+=1) {
+	canv.fillStyle = appController.color;
+	for (var i = 0; i <= appController.numDataPoints; i+=1) {
 		canv.beginPath();
-		canv.arc(i*(CANV_WIDTH/NUM_DATA_POINTS), 200-scaledSet[i], 2, 2, 360);
+		canv.arc(i*(CANV_WIDTH/appController.numDataPoints), 200-scaledSet[i], 2, 2, 360);
 		canv.fill();
 	}
 }
 
 function lerp(a,b,f) 
 {	
-	// a = min, b = max, f = fraction (0 - 1);
 	return a  - (f * a) + (f * b);
-}
-
-function lerpSet(objectX) {
-	var mySet = objectX.set;
-	for (var i = 0; i < mySet.length-1; i++){
-		mySet[i] = lerp(mySet[Math.floor(i/objectX.interval)*objectX.interval],
-							mySet[Math.floor(i/objectX.interval+1)*objectX.interval],
-							(i%objectX.interval)/objectX.interval);
-		//console.log(mySet[i]);
-	}
-	return mySet;
 }
