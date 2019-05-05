@@ -15,25 +15,6 @@ var btnToggle2 = document.getElementById("btnToggle2");
 var btnToggle3 = document.getElementById("btnToggle3");
 var btnToggle4 = document.getElementById("btnToggle4");
 
-
-// Toggles
-btnToggle1.addEventListener("click", function(){
-	// console.log("Toggle1");
-})
-
-btnToggle2.addEventListener("click", function(){
-	// console.log("Toggle2");
-})
-
-btnToggle3.addEventListener("click", function(){
-	// console.log("Toggle3");
-})
-
-btnToggle4.addEventListener("click", function(){
-	// console.log("Toggle4");
-})
-
-
 //----------------------------------------
 //			INITIALIZATION
 //----------------------------------------
@@ -41,7 +22,7 @@ btnToggle4.addEventListener("click", function(){
 var layers = {
 	layer1: {
 		id: "layer1",
-		color: "#8888DD",
+		color: "#AFAFEF",
 		interval: 8,
 		dotSize: 5,
 		min: 0,
@@ -50,7 +31,7 @@ var layers = {
 	},
 	layer2: {
 		id: "layer2",
-		color: "#55DD55",
+		color: "#99EE99",
 		interval: 4,
 		dotSize: 4,
 		min: 4,
@@ -59,7 +40,7 @@ var layers = {
 	},
 	layer3: {
 		id: "layer3",
-		color: "#EEAA33",
+		color: "#FFCC66",
 		interval: 2,
 		dotSize: 3,
 		min: 80,
@@ -68,7 +49,7 @@ var layers = {
 	},
 	layer4: {
 		id: "layer4",
-		color: "#EE6666",
+		color: "#FF9999",
 		interval: 1,
 		dotSize: 2,
 		min: 100,
@@ -77,14 +58,14 @@ var layers = {
 	}
 }
 
+appController = {
+	renderLayers: [true,true,true,true],
+	calcLayers: [true,true,true,true],
+	perlin: []
+}
 
 const TOT_COLOR						= "black";
 var setTotals							= [];
-var perlinSetData					= [layers.layer1.set,
-											layers.layer2.set,
-											layers.layer3.set,
-											layers.layer4.set,
-											setTotals];
 
 const NUM_DATA_POINTS			= 80;
 const CANV_WIDTH					= c.width;
@@ -112,9 +93,9 @@ btnGenerate.addEventListener("click", function(){
 	renderLayer(layers.layer1);
 	//renderLayer1();
 
-	lerpSetX(layers.layer1);
-	lerpSetX(layers.layer2);
-	lerpSetX(layers.layer3);
+	lerpSet(layers.layer1);
+	lerpSet(layers.layer2);
+	lerpSet(layers.layer3);
 
 	generateTotals(layers);
 	// console.log(perlinSetData);
@@ -123,8 +104,25 @@ btnGenerate.addEventListener("click", function(){
 
 })
 
+// Toggles
+btnToggle1.addEventListener("click", function(){
+	
+})
+
+btnToggle2.addEventListener("click", function(){
+	// console.log("Toggle2");
+})
+
+btnToggle3.addEventListener("click", function(){
+	// console.log("Toggle3");
+})
+
+btnToggle4.addEventListener("click", function(){
+	// console.log("Toggle4");
+})
+
 //----------------------------------------
-//			FUNCTIONS
+//			Grid Rendering
 //----------------------------------------
 
 function clearChart(){
@@ -167,6 +165,10 @@ function drawGuides(){
 	}
 }
 
+//----------------------------------------
+//			Data Generation
+//----------------------------------------
+
 function generateLayer(objectX) {
 	var set = [];
 	for (var i = 0; i <= NUM_DATA_POINTS; i+=1){
@@ -178,15 +180,32 @@ function generateLayer(objectX) {
 	return set;
 }
 
-
 function generateTotals(objectY) {
 	for (var i = 0; i <= NUM_DATA_POINTS; i+=1) {
-		perlinSetData[4][i] = objectY.layer1.set[i]
+		appController.perlin[i] = objectY.layer1.set[i]
 									+ objectY.layer2.set[i]
 									+ objectY.layer3.set[i]
 									+ objectY.layer4.set[i];
 	}
 }
+
+function scaleTotalForChart(objectY){
+	var scaledSet = [];
+	var totalMaxVal = objectY.layer1.max
+						+ objectY.layer2.max
+						+ objectY.layer3.max
+						+ objectY.layer4.max;
+	
+	for (var i = 0; i < NUM_DATA_POINTS; i++){
+		scaledSet[i] = appController.perlin[i]*(200/totalMaxVal);
+	}
+
+	return scaledSet;
+}
+
+//----------------------------------------
+//			Data Rendering
+//----------------------------------------
 
 function renderLayer(objectX) {
 	// console.log ("rendering Layer: " + objectX.id);
@@ -231,39 +250,18 @@ function renderTotal(objectY) {
 	}
 }
 
-function scaleTotalForChart(objectY){
-	var scaledSet = [];
-	var totalMaxVal = objectY.layer1.max
-						+ objectY.layer2.max
-						+ objectY.layer3.max
-						+ objectY.layer4.max;
-	
-	for (var i = 0; i < NUM_DATA_POINTS; i++){
-		scaledSet[i] = perlinSetData[4][i]*(200/totalMaxVal);
-	}
-
-	return scaledSet;
-}
-
 function lerp(a,b,f) 
 {	
 	// a = min, b = max, f = fraction (0 - 1);
 	return a  - (f * a) + (f * b);
 }
 
-function lerpSetX(objectX) {
+function lerpSet(objectX) {
 	var mySet = objectX.set;
 	for (var i = 0; i < mySet.length-1; i++){
-		mySet[i] = lerp(mySet[Math.floor(i/objectX.interval)*objectX.interval],mySet[Math.floor(i/objectX.interval+1)*objectX.interval],(i%objectX.interval)/objectX.interval);
-		//console.log(mySet[i]);
-	}
-	return mySet;
-}
-
-function lerpSet(set, interval) {
-	var mySet = set;
-	for (var i = 0; i < mySet.length-1; i++){
-		mySet[i] = lerp(mySet[Math.floor(i/interval)*interval],mySet[Math.floor(i/interval+1)*interval],(i%interval)/interval);
+		mySet[i] = lerp(mySet[Math.floor(i/objectX.interval)*objectX.interval],
+							mySet[Math.floor(i/objectX.interval+1)*objectX.interval],
+							(i%objectX.interval)/objectX.interval);
 		//console.log(mySet[i]);
 	}
 	return mySet;
