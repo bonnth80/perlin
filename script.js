@@ -6,7 +6,6 @@
 var c = document.getElementById("canvas");
 var canv = c.getContext("2d");
 
-
 // Button Variables
 var btnGenerate = document.getElementById("btnGenerate");
 
@@ -27,6 +26,7 @@ var layers = [
 		min: 20,
 		interval: 8,
 		calcLayer: true,
+		renderLayer: true,
 		color: "#AFAFEF",
 		dotSize: 5
 	},
@@ -36,6 +36,7 @@ var layers = [
 		min: 40,
 		interval: 4,
 		calcLayer: true,
+		renderLayer: true,
 		color: "#99EE99",
 		dotSize: 4
 	},
@@ -45,6 +46,7 @@ var layers = [
 		min: 60,
 		interval: 2,
 		calcLayer: true,
+		renderLayer: true,
 		color: "#FFCC66",
 		dotSize: 3
 	},
@@ -54,20 +56,18 @@ var layers = [
 		min: 80,
 		interval: 1,
 		calcLayer: true,
+		renderLayer: true,
 		color: "#FF9999",
 		dotSize: 2,
 	}
 ];
 
 appController = {
-	renderLayers: [true, true, true, true],
-	calcLayers: [true, true, true, true],
 	totals: [],
 	perlin: [],
 	color: "#000",
 	numDataPoints: 80
 }
-
 
 // Set up canvas ruler Guides
 const CANV_WIDTH					= c.width;
@@ -82,20 +82,27 @@ btnGenerate.addEventListener("click", generatePerlin);
 
 // Toggles
 btnToggle1.addEventListener("click", function(){
-	// layers[0].calcLayer = !layers[0].calcLayer;
-	// perlin();
+	layers[0].calcLayer = !layers[0].calcLayer;
+	perlin(layers);
+	renderPerlin();
 });
 
 btnToggle2.addEventListener("click", function(){
-	// console.log("Toggle2");
+	layers[1].calcLayer = !layers[1].calcLayer;
+	perlin(layers);
+	renderPerlin();
 });
 
 btnToggle3.addEventListener("click", function(){
-	// console.log("Toggle3");
+	layers[2].calcLayer = !layers[2].calcLayer;
+	perlin(layers);
+	renderPerlin();
 });
 
 btnToggle4.addEventListener("click", function(){
-	// console.log("Toggle4");
+	layers[3].calcLayer = !layers[3].calcLayer;
+	perlin(layers);
+	renderPerlin();
 });
 
 //----------------------------------------
@@ -147,9 +154,7 @@ function drawGuides(){
 //----------------------------------------
 
 function generatePerlin() {
-	/*
-		P = ((maxA-minA) * (A[i] + B[i] + C[i] ...) / maxTotal) - minA
-	*/
+	/*	P = ((maxA-minA) * (A[i] + B[i] + C[i] ...) / maxTotal) - minA	*/
 
 	generateLayerData();
 	perlin(layers);
@@ -159,7 +164,7 @@ function generatePerlin() {
 function generateLayerData() {
 	// generate individual layer data
 	layers.forEach(function(e){
-		e.set = generateLayer_wLerp(e);
+		e.set = generateLayer(e);
 	})
 }
 
@@ -179,21 +184,23 @@ function perlin(objectX) {
 
 function renderPerlin(){	
 	clearChart();
+
 	// render individual layers
 	layers.forEach(function(e){
-		renderLayer(e);
+		if (e.calcLayer && e.renderLayer)
+			renderLayer(e);
 	})
+
 	// render perlin
 	renderTotal(appController);
 }
 
-function generateLayer_wLerp(objectX) {
+function generateLayer(objectX) {
 	var set = [];
-
 	var nextVal = Math.floor(Math.random() * (objectX.max - objectX.min) + objectX.min);;
 	var currentVal = 0.0;
-
 	set[0] = currentVal;
+
 	for (var i = 0; i <= appController.numDataPoints; i += 1){		
 		if (i % objectX.interval == 0){
 			set[i] = currentVal = nextVal;
@@ -203,12 +210,14 @@ function generateLayer_wLerp(objectX) {
 			set[i] = lerp(currentVal,nextVal,(i % objectX.interval / objectX.interval));
 		}
 	}
+
 	return set;
 }
 
 function perlinScale(totals){
 	var scaledSet = [];
 	var totalMaxVal = 0.0;
+
 	layers.forEach(function(e){
 		if (e.calcLayer)
 			totalMaxVal += e.max;
@@ -217,6 +226,7 @@ function perlinScale(totals){
 	for (var i = 0; i <= appController.numDataPoints; i++){
 		scaledSet[i] = totals[i] / totalMaxVal * 200;
 	}
+
 	return scaledSet;
 }
 
@@ -226,6 +236,7 @@ function perlinScale(totals){
 
 function renderLayer(objectX) {
 	canv.beginPath();
+
 	// start line
 	canv.strokeStyle = objectX.color;
 	canv.moveTo(0, objectX.set[0]);
@@ -253,9 +264,10 @@ function renderTotal(objectY) {
 	for (var i = 0; i <= appController.numDataPoints; i += 1) {
 		canv.lineTo(i * (CANV_WIDTH / appController.numDataPoints), 200 - objectY.perlin[i]);		
 	}
-	canv.stroke();
-	
+
+	canv.stroke();	
 	canv.fillStyle = appController.color;
+
 	for (var i = 0; i <= appController.numDataPoints; i += 1) {
 		canv.beginPath();
 		canv.arc(i * (CANV_WIDTH / appController.numDataPoints), 200 - objectY.perlin[i], 2, 2, 360);
