@@ -7,46 +7,45 @@
 </head>
 <body>
 
-<h1>Perlin Noise Generator</h1>
-This project generates and renders one dimensional perlin noise. Click the Generate button to create one random perlin noise wave.
-
-Read about perlin noise here: <a href="https://en.wikipedia.org/wiki/Perlin_noise">Wikipedia - Perlin Noise</a>
-
 <div>
-	<h3>Perlin</h3>
-	<button id="btnGenerate">Generate</button>
+	<h1>Perlin Noise Generator</h1>
+	<p>Developed by <a href="http://tbonner.atwebpages.com">Thomas Bonner</a></p>
+	<p>This project generates and renders one dimensional perlin noise. Click the Generate button to create one random perlin noise wave.
+	Read about perlin noise here: <a href="https://en.wikipedia.org/wiki/Perlin_noise">Wikipedia - Perlin Noise</a></p>
 </div>
 
-<div id="i-controls">
-	<h3>Layers</h3>
-	<div class="i-layer">
-		<span>Layer 1:</span>
-		<button id="btnToggle1" class="btnHL">Toggle</button>
-		<button id="btnShow1" class="btnHL">Show / Hide</button>
-	</div> <br />	
-	<div class="i-layer">
-		<span>Layer 2:</span>
-		<button id="btnToggle2" class="btnHL">Toggle</button>
-		<button id="btnShow2" class="btnHL">Show / Hide</button>
-	</div> <br />
-
-	
-	<div class="i-layer">
-		<span>Layer 3:</span>
-		<button id="btnToggle3" class="btnHL">Toggle</button>
-		<button id="btnShow3" class="btnHL">Show / Hide</button>
-	</div> <br />
-
-	
-	<div class="i-layer">
-		<span>Layer 4:</span>
-		<button id="btnToggle4" class="btnHL">Toggle</button>
-		<button id="btnShow4" class="btnHL">Show / Hide</button>
+<div id="mainField">
+	<div id="grpGenerate">
+		<h3>Perlin</h3>
+		<button id="btnGenerate">Generate</button>
 	</div>
-</div>
+	<div id="i-controls">
+		<h3>Layers</h3>
+		<div class="i-layer">
+			<span>Layer 1:</span>
+			<button id="btnToggle1" class="btnHL">Toggle</button>
+			<button id="btnShow1" class="btnHL">Show / Hide</button>
+		</div> <br />	
+		<div class="i-layer">
+			<span>Layer 2:</span>
+			<button id="btnToggle2" class="btnHL">Toggle</button>
+			<button id="btnShow2" class="btnHL">Show / Hide</button>
+		</div> <br />	
+		<div class="i-layer">
+			<span>Layer 3:</span>
+			<button id="btnToggle3" class="btnHL">Toggle</button>
+			<button id="btnShow3" class="btnHL">Show / Hide</button>
+		</div> <br />	
+		<div class="i-layer">
+			<span>Layer 4:</span>
+			<button id="btnToggle4" class="btnHL">Toggle</button>
+			<button id="btnShow4" class="btnHL">Show / Hide</button>
+		</div>
+	</div>
 
-<div id="canvFrame">
-	<canvas id="canvas" width="800" height="200"></canvas>
+	<div id="canvFrame">
+		<canvas id="canvas" width="800" height="200"></canvas>
+	</div>
 </div>
 
 <script type="text/javascript" src="script/script.js"></script>

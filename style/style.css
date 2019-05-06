@@ -13,18 +13,29 @@ h3 {
 canvas {
 	display: inline;
 	border: 1px solid black;
-	margin: 16px auto 8px auto;
-	/* transform: scale(.7); */
 }
 
 #canvFrame {	
 	display: inline-block;
 	vertical-align: top;
+	/* border: 1px solid green; */
+	padding: 0px;
 }
 
 /* Controls */
+#grpGenerate {
+	text-align: center;
+	margin: 4px;
+}
+
+#mainField {
+	display: inline-block;
+	/* border: 2px solid rgb(0, 26, 255); */
+}
+
 #i-controls {
 	display: inline-block;
+	/* border: 2px solid red; */
 }
 
 .i-layer {
