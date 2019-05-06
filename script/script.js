@@ -154,7 +154,7 @@ function renderPerlin(){
 
 function generateLayer(objectX) {
 	var set = [];
-	var nextVal = Math.floor(Math.random() * (objectX.max - objectX.min) + objectX.min);;
+	var nextVal = Math.floor(Math.random() * (objectX.max - objectX.min) + objectX.min);
 	var currentVal = 0.0;
 	set[0] = currentVal;
 
