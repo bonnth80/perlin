@@ -22,6 +22,28 @@ canvas {
 	padding: 0px;
 }
 
+/*  Profile Links */
+/* ******************************************** */
+#profLinks {
+	font-size: 24px;
+	transition-duration: 200ms;
+	color: #222;
+ }
+ 
+ #profLinks a {
+	text-decoration: none;
+ }
+ 
+ #profLinks a:hover, #profLinks a:visited:hover{
+	transition-duration: 200ms;
+	color: rgb(29, 170, 111);
+ }
+ 
+ #profLinks a:visited{
+	transition-duration: 200ms;
+	color: #888;
+ }
+
 /* Controls */
 #grpGenerate {
 	text-align: center;

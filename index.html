@@ -1,24 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Noise Test</title>
+	<title>Perlin Noise Generator</title>
 	<meta charset="utf-8">
+
+	<!-- font awesome -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+	<!-- local style -->
 	<link rel="stylesheet" type="text/css" href="style/style.css">
 </head>
 <body>
 
 <div>
 	<h1>Perlin Noise Generator</h1>
-	<p>Developed by <a href="http://tbonner.atwebpages.com">Thomas Bonner</a></p>
-	<p>This project generates and renders one dimensional perlin noise. Click the Generate button to create one random perlin noise wave.
+	<p>Developed by <a href="http://tbonner.atwebpages.com">Thomas Bonner</a></p>	
+	<div id="profLinks">
+		<a href="https://1drv.ms/b/s!AriNDWWFubePgu1fIKLKfbVkU8ADdQ" target="_blank">
+			<i class="far fa-file-alt"></i>
+		</a>
+		<a href="https://www.github.com/bonnth80" target="_blank">
+			<i class="fab fa-github"></i>
+		</a>
+		<a href="https://www.linkedin.com/in/thomas-bonner-b962562/" target="_blank">
+				<i class="fab fa-linkedin"></i>
+		</a>
+		<a href="mailto:zerosavant@yahoo.com">
+				<i class="far fa-envelope"></i>
+		</a>
+	</div>
+	<p>This generates and renders one dimensional perlin noise. Click the Generate button to create one random perlin noise wave.
 	Read about perlin noise here: <a href="https://en.wikipedia.org/wiki/Perlin_noise">Wikipedia - Perlin Noise</a></p>
 </div>
 
 <div id="mainField">
-	<div id="grpGenerate">
-		<h3>Perlin</h3>
-		<button id="btnGenerate">Generate</button>
-	</div>
 	<div id="i-controls">
 		<h3>Layers</h3>
 		<div class="i-layer">
@@ -43,6 +58,11 @@
 		</div>
 	</div>
 
+	<div id="grpGenerate">
+		<h3>Perlin</h3>
+		<button id="btnGenerate">Generate</button>
+	</div>
+	
 	<div id="canvFrame">
 		<canvas id="canvas" width="800" height="200"></canvas>
 	</div>
