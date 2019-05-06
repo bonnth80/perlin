@@ -6,18 +6,6 @@
 var c = document.getElementById("canvas");
 var canv = c.getContext("2d");
 
-// Button Variables
-var btnGenerate = document.getElementById("btnGenerate");
-
-var btnToggle1 = document.getElementById("btnToggle1");
-var btnToggle2 = document.getElementById("btnToggle2");
-var btnToggle3 = document.getElementById("btnToggle3");
-var btnToggle4 = document.getElementById("btnToggle4");
-
-//----------------------------------------
-//			INITIALIZATION
-//----------------------------------------
-
 // layer data
 var layers = [
 	{
@@ -74,38 +62,6 @@ const CANV_WIDTH					= c.width;
 drawGuides();
 
 //----------------------------------------
-//			BUTTON FUNCTIONS
-//----------------------------------------
-
-// Generate
-btnGenerate.addEventListener("click", generatePerlin);
-
-// Toggles
-btnToggle1.addEventListener("click", function(){
-	layers[0].calcLayer = !layers[0].calcLayer;
-	perlin(layers);
-	renderPerlin();
-});
-
-btnToggle2.addEventListener("click", function(){
-	layers[1].calcLayer = !layers[1].calcLayer;
-	perlin(layers);
-	renderPerlin();
-});
-
-btnToggle3.addEventListener("click", function(){
-	layers[2].calcLayer = !layers[2].calcLayer;
-	perlin(layers);
-	renderPerlin();
-});
-
-btnToggle4.addEventListener("click", function(){
-	layers[3].calcLayer = !layers[3].calcLayer;
-	perlin(layers);
-	renderPerlin();
-});
-
-//----------------------------------------
 //			Grid Rendering
 //----------------------------------------
 
@@ -132,16 +88,17 @@ function drawGuides(){
 	}
 
 	canv.beginPath()
-	canv.strokeStyle = "#000000";
+	canv.strokeStyle = "#222";
+	canv.fillStyle = "#447";
 
-	for (var i = 0; i <= 200; i += 20) {
+	for (var i = 0; i <= 180; i += 20) {
 		canv.moveTo(0, i - 0.5);
 		canv.lineTo(10, i - 0.5);
 		canv.stroke();
 		canv.fillText(200 - i, 11, i+2)
 	}	
 
-	for (var i = 0; i <= CANV_WIDTH; i += 20) {
+	for (var i = 20; i <= CANV_WIDTH; i += 20) {
 		canv.moveTo(i + 0.5, 200);
 		canv.lineTo(i + 0.5, 190);
 		canv.stroke();

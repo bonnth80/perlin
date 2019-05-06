@@ -3,7 +3,7 @@
 <head>
 	<title>Noise Test</title>
 	<meta charset="utf-8">
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="style/style.css">
 </head>
 <body>
 
@@ -12,52 +12,45 @@ This project generates and renders one dimensional perlin noise. Click the Gener
 
 Read about perlin noise here: <a href="https://en.wikipedia.org/wiki/Perlin_noise">Wikipedia - Perlin Noise</a>
 
+<div>
+	<h3>Perlin</h3>
+	<button id="btnGenerate">Generate</button>
+</div>
 
-<h3>Perlin</h3>
-<button id="btnGenerate">Generate</button>
+<div id="i-controls">
+	<h3>Layers</h3>
+	<div class="i-layer">
+		<span>Layer 1:</span>
+		<button id="btnToggle1" class="toggle">Toggle</button>
+		<button id="btnShow1">Show / Hide</button>
+	</div> <br />	
+	<div class="i-layer">
+		<span>Layer 2:</span>
+		<button id="btnToggle2" class="toggle">Toggle</button>
+		<button id="btnShow2">Show / Hide</button>
+	</div> <br />
 
-<h3>Toggle</h3>
-<button id="btnToggle1">Layer 1</button>
-<button id="btnToggle2">Layer 2</button>
-<button id="btnToggle3">Layer 3</button>
-<button id="btnToggle4">Layer 4</button>
+	
+	<div class="i-layer">
+		<span>Layer 3:</span>
+		<button id="btnToggle3" class="toggle">Toggle</button>
+		<button id="btnShow3">Show / Hide</button>
+	</div> <br />
 
+	
+	<div class="i-layer">
+		<span>Layer 4:</span>
+		<button id="btnToggle4" class="toggle">Toggle</button>
+		<button id="btnShow4">Show / Hide</button>
+	</div>
+</div>
 
 <div id="canvFrame">
 	<canvas id="canvas" width="800" height="200"></canvas>
 </div>
 
-<script type="text/javascript" src="script.js"></script>
-
-<!-- <div id="3dRenderer" style="width: 400px; height: 300px">
-</div>
-
-<div id="controls">
-	Pan
-	<button id="btnPanUp">up</button>
-	<button id="btnPanDown">down</button>
-	<button id="btnPanLeft">left</button>
-	<button id="btnPanRight">right</button>
-	<button id="btnPanForward">forward</button>
-	<button id="btnPanBack">back</button>
-	<br>
-	Rotate
-	<button id="btnRotateUp">up</button>
-	<button id="btnRotateDown">down</button>
-	<button id="btnRotateLeft">left</button>
-	<button id="btnRotateRight">right</button>
-	<br>
-	Bank
-	<button id="btnBankLeft">left</button>
-	<button id="btnBankRight">right</button>
-	<br>
-	<button id="btnZoomExtend">Zoom Extend</button>
-	<button id="btnFreeze">Freeze Camera</button>
-</div> -->
-<!-- Three.js -->    
-<!-- <script src="js\Detector.js"></script>
-<script src="js\three.js"></script>
-<script src="js\script.js"></script> -->
+<script type="text/javascript" src="script/script.js"></script>
+<script type="text/javascript" src="script/interface.js"></script>
 
 </body>
 </html>
